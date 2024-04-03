@@ -5,6 +5,9 @@ const cors = require('cors');
 const { ApolloServer, gql } = require('apollo-server-express');
 const dotenv = require('dotenv');
 
+const EmployeeModel = require('./models/Employee');
+const UserModel = require('./models/User'); 
+
 dotenv.config();
 
 // MongoDB connection

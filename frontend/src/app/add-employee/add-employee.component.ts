@@ -64,9 +64,7 @@ export class AddEmployeeComponent {
           this.errorMessage = "";
           this.successMessage =
             "Employee created successfully!";
-          setTimeout(() => {
-            this.router.navigate(["/homepage"]);
-          }, 3000);
+          this.router.navigate(["/homepage"]);
         },
         (error) => {
           this.errorMessage = error.message;

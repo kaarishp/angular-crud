@@ -8,6 +8,9 @@ const dotenv = require('dotenv');
 const EmployeeModel = require('./models/Employee');
 const UserModel = require('./models/User'); 
 
+const bcrypt = require('bcrypt');
+const User = require('./models/User');
+
 dotenv.config();
 
 // MongoDB connection
@@ -20,6 +23,23 @@ mongoose.connect(DB_CONNECTION_STRING, {
 }).catch(err => {
   console.error('Error connecting to MongoDB:', err);
 });
+
+
+const loginResolver = async (parent, { username, password }, context, info) => {
+    // Fetch user from the database
+    const user = await User.findOne({ username });
+    if (!user) {
+      throw new Error('User not found');
+    }
+  
+    // Compare password
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      throw new Error('Invalid password');
+    }
+  
+    // Proceed with login success logic (e.g., generating a JWT token)
+};
 
 // GraphQL Schema Definitions
 const typeDefs = gql`

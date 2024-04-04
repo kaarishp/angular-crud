@@ -40,13 +40,11 @@ export class SignupComponent {
       return;
     }
 
-    // Check if email is valid
     if (!this.signupForm.controls["email"].valid) {
       this.errorMessage = "Please enter a valid email address.";
       return;
     }
 
-    // Check if password is valid
     if (!this.signupForm.controls["password"].valid) {
       this.errorMessage = "Please enter a valid password.";
       return;

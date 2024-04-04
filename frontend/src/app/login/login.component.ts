@@ -46,6 +46,8 @@ export class LoginComponent {
       });
   }
 
+  
+
   goToSignUp(event: Event) {
     event.preventDefault();
     this.employeeService.goToSignup();

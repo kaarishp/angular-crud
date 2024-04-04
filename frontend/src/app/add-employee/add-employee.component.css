@@ -1,0 +1,88 @@
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background-color: #f4f4f4; 
+}
+
+.container {
+    width: 100%;
+    max-width: 400px; 
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: .5rem;
+    color: #333;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+}
+
+button[type="button"] {
+    background-color: #f44336;
+    color: white;
+}
+
+p {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+p.text-danger {
+    color: #f44336;
+}
+
+p.text-success {
+    color: #4CAF50;
+}

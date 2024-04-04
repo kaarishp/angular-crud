@@ -1,0 +1,99 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+}
+
+nav {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+nav a.navbar-brand {
+    color: white;
+    text-decoration: none;
+    font-size: 24px;
+}
+
+nav a.nav-link {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+nav a:hover {
+    opacity: 0.9;
+}
+
+.container {
+    margin: 20px;
+}
+
+.row {
+    display: flex;
+    justify-content: start;
+}
+
+.card-body {
+    margin: 10px 0;
+    margin-left: 30px;
+}
+
+.card-body a {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+table {
+    margin-left: 40px;
+    width: 95%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+thead {
+    background-color: #007bff;
+    color: white;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px 20px;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+button {
+    border: none;
+    padding: 5px 10px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="button"]:first-child {
+    background-color: #28a745;
+    color: white;
+}
+
+button[type="button"]:nth-child(2) {
+    background-color: #dc3545;
+    color: white;
+}
+
+button[type="button"]:last-child {
+    background-color: #17a2b8;
+    color: white;
+}

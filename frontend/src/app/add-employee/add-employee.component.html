@@ -1,0 +1,37 @@
+<div class="container">
+        <form [formGroup]="employeeForm" (ngSubmit)="addEmployee()">
+            <h2>Add Employee</h2>
+            <div>
+                <label for="firstname">First Name</label>
+                <input id="firstname" type="text" formControlName="firstname" name="firstname"/>
+            </div>
+            <div>
+                <label for="lastname">Last Name</label>
+                <input id="lastname" type="text" formControlName="lastname" name="lastname"/>
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <input id="email" type="email" formControlName="email" name="email"/>
+            </div>
+            <div>
+                <label for="gender">Gender</label>
+                <select id="gender" formControlName="gender" name="gender">
+                    <option value="" disabled>Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="salary">Salary</label>
+                <input id="salary" type="number" formControlName="salary" name="salary"/>
+                <p *ngIf="errorMessage">{{ errorMessage }}</p>
+                <p *ngIf="successMessage">{{ successMessage }}</p>
+            </div>
+            <div>
+                <button type="submit">Create</button>
+                <button type="button" (click)="goHome()">Cancel</button>
+
+            </div>
+        </form>
+    </div>

@@ -1,1 +1,30 @@
-<h1>Signup</h1>
+<nav>
+  <div>
+    <a class="loginb" (click)="goToLogin($event)" id="navbarSupportedContent">Login</a>
+  </div>
+</nav>
+
+<div>
+  <div>
+    <form [formGroup]="signupForm" (ngSubmit)="signup()">
+      <h2>Register an Account</h2>
+      <div>
+        <label for="username">Username</label>
+        <input id="username" type="text" formControlName="username" name="username" />
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" name="email" />
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" name="password" />
+        <p *ngIf="errorMessage">{{ errorMessage }}</p>
+        <p *ngIf="successMessage">{{ successMessage }}</p>
+      </div>
+      <div>
+        <button type="submit">Create Account</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<nav>
+  <div class="nav-container">
+    <a (click)="goToSignUp($event)" id="navbarSupportedContent">Register</a>
+  </div>
+</nav>
+
+<div>
+  <div>
+    <div>
+      <h2>Welcome</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <div>
+          <label for="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            formControlName="username"
+            name="username"
+          />
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            name="password"
+          />
+          <p *ngIf="errorMessage">
+            {{ errorMessage }}
+          </p>
+        </div>
+        <div>
+          <button type="submit">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

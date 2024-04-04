@@ -1,0 +1,41 @@
+<nav>
+  <a class="navbar-brand" href="#">Employee Management App</a>
+  <a class="nav-link" href="#" (click)="goToLogin($event)">Logout</a>
+</nav>
+<div>
+  <div class="row justify-content-left">
+    <div class="card-body">
+      <a (click)="goToAddEmployee($event)" href="#">Register Employee</a>
+    </div>
+  </div>
+  <div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let employee of employees">
+            <tr>
+              <td><span>{{ employee.firstname }}</span></td>
+              <td><span>{{ employee.lastname }}</span></td>
+              <td>{{ employee.email }}</td>
+              <td>
+                <div>
+                  <button (click)="goToViewOneEmployee($event, employee)" type="button">View</button>
+                  <button (click)="goToUpdate($event, employee)" type="button">Update</button>
+                  <button (click)="showDeleteDialog = true; selectedEmployee = employee; deleteEmployee()" type="button">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

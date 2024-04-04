@@ -79,7 +79,7 @@ export class AddEmployeeComponent {
   }
 
   goHome() {
-    this.router.navigate(['/homepage']); // Navigates to the home page (assuming the route is set to '/')
+    this.router.navigate(['/homepage']); 
   }
   
 

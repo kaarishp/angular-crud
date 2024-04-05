@@ -9,9 +9,11 @@ const EmployeeModel = require('./models/Employee');
 const UserModel = require('./models/User'); 
 
 const bcrypt = require('bcrypt');
-const User = require('./models/User');
+const jwt = require('jsonwebtoken');
 
-dotenv.config();
+// dotenv.config();
+require('dotenv').config();
+
 
 // MongoDB connection
 const DB_CONNECTION_STRING = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`;
@@ -54,6 +56,7 @@ type Employee {
   error: String
 }
 type User {
+  id: ID!
   username: String!
   email: String!
   password: String!
@@ -100,26 +103,39 @@ const resolvers = {
               return await EmployeeModel.findById(args.id);
           } catch (err) {
               if (!args.id) {
-                  throw new Error('Please provide an ID.');
+                  throw new Error('Enter an ID.');
               } else if (err.name === 'CastError') {
-                  throw new Error('The provided ID is not valid.');
+                  throw new Error('ID is not valid.');
               }
-              throw new Error('There was a problem retrieving the employee details.');
+              throw new Error('Error employee details.');
           }
       },
-      login: async (_, args) => {
-          try {
-              const user = await UserModel.findOne({ username: args.username });
-  
-              if (user && user.password === args.password) {
-                  return `User ${user.username} logged in successfully.`;
-              } else {
-                  return 'Incorrect username or password. Please try again.';
-              }
-          } catch (err) {
-              return `Error logging in: ${err.message}`;
-          }
-      }
+      login: async (_, { username, password }) => {
+        try {
+            const user = await UserModel.findOne({ username });
+    
+            if (!user) {
+                throw new Error("User not found");
+            }
+    
+            const passwordMatch = await bcrypt.compare(password, user.password);
+    
+            if (!passwordMatch) {
+                throw new Error("Invalid password");
+            }
+    
+            // Generate a token
+            const token = jwt.sign(
+              { userId: user.id, email: user.email },
+              process.env.JWT_SECRET, 
+              { expiresIn: '1h' } 
+            );
+
+            return { message: "Login successful", user, token };
+        } catch (error) {
+            throw new Error(error.message || "Login Error.");
+        }
+    },
     },
     Mutation: {
       addEmployee: async (_, args) => {
@@ -134,18 +150,18 @@ const resolvers = {
               return await newEmployee.save();
           } catch (err) {
               if (!args.firstname || !args.lastname || !args.email || !args.gender || !args.salary) {
-                  throw new Error('Please ensure all required fields are completed.');
+                  throw new Error('Please ensure all required fields are included.');
               }
               if (err.code === 11000) {
                   const field = Object.keys(err.keyPattern)[0];
                   throw new Error(`An employee with that ${field} already exists.`);
               } else if (err.name === 'ValidationError') {
                   if (err.errors.salary) {
-                      throw new Error('The salary must be a positive number.');
+                      throw new Error('Must be more than 0');
                   }
                   throw new Error('Please enter a valid email address.');
               } else {
-                  throw new Error('Unable to add the employee due to an error.');
+                  throw new Error('Add Employee Error.');
               }
           }
       },
@@ -175,7 +191,7 @@ const resolvers = {
                   const field = Object.keys(err.keyPattern)[0];
                   throw new Error(`An employee with that ${field} already exists. Please use a different ${field}.`);
               } else {
-                  throw new Error('An error occurred during the employee update process.');
+                  throw new Error('employee update error');
               }
           }
       },
@@ -192,26 +208,18 @@ const resolvers = {
               throw new Error('An error occurred during the deletion process.');
           }
       },
-      signup: async (_, args) => {
-          try {
-              const newUser = new UserModel({
-                  username: args.username,
-                  email: args.email,
-                  password: args.password
-              });
-              return await newUser.save();
-          } catch (err) {
-              if (!args.username || !args.email || !args.password) {
-                  throw new Error('Username, email, and password are required fields.');
-              } else if (err.code === 11000) {
-                  const field = Object.keys(err.keyPattern)[0];
-                  throw new Error(`A user with that ${field} already exists. Please choose another.`);
-              } else if (err.name === 'ValidationError') {
-                  throw new Error('The email address format is invalid.');
-              } else {
-                  throw new Error('We encountered an error during the signup process.');
-              }
-          }
+      signup: async (_, { username, password, email }) => { 
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+    
+        const user = new UserModel({
+          username,
+          password: hashedPassword,
+          email 
+        });
+    
+        await user.save();
+        return { id: user.id, username: user.username, email };
       }
     }
 };

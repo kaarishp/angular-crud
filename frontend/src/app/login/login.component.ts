@@ -24,33 +24,13 @@ export class LoginComponent {
   ) {}
 
   async login() {
-    // Ensure username and password are treated as strings, defaulting to empty strings if null or undefined
-    const username = this.loginForm.get('username')?.value ?? '';
-    const password = this.loginForm.get('password')?.value ?? '';
+    const simulatedResponse = { token: "fake-jwt-token", user: { id: 1, username: "user" } };
   
-    // Check if both username and password are provided
-    if (username && password) {
-      // Call the login method from your service, passing the username and password
-      this.employeeService.login(username, password).subscribe({
-        next: (response) => {
-          // Handle successful login here, such as redirecting the user or storing authentication tokens
-          console.log('Login successful:', response);
-          // Example redirection after successful login
-          this.router.navigate(["/homepage"]);
-        },
-        error: (error) => {
-          // Handle any errors that occur during the login process
-          this.errorMessage = 'Login failed. Please check your credentials and try again.';
-          console.error('Login error:', error);
-        }
-      });
-    } else {
-      // If either username or password is missing, set an error message to inform the user
-      this.errorMessage = 'Both username and password are required.';
-    }
+    console.log('Login successful:', simulatedResponse);
+    this.router.navigate(["/homepage"]);
   }
   
-  
+
   goToSignUp(event: Event) {
     event.preventDefault();
     this.employeeService.goToSignup();

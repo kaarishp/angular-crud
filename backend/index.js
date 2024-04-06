@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -11,10 +13,6 @@ const UserModel = require('./models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// dotenv.config();
-require('dotenv').config();
-
-
 // MongoDB connection
 const DB_CONNECTION_STRING = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 mongoose.connect(DB_CONNECTION_STRING, {
@@ -26,22 +24,6 @@ mongoose.connect(DB_CONNECTION_STRING, {
   console.error('Error connecting to MongoDB:', err);
 });
 
-
-const loginResolver = async (parent, { username, password }, context, info) => {
-    // Fetch user from the database
-    const user = await User.findOne({ username });
-    if (!user) {
-      throw new Error('User not found');
-    }
-  
-    // Compare password
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) {
-      throw new Error('Invalid password');
-    }
-  
-    // Proceed with login success logic (e.g., generating a JWT token)
-};
 
 // GraphQL Schema Definitions
 const typeDefs = gql`
@@ -55,19 +37,29 @@ type Employee {
   message: String
   error: String
 }
+type SignUpResponse {
+    message: String!
+    user: User
+}
+type LoginResponse {
+    message: String
+    user: User,
+}
 type User {
   id: ID!
   username: String!
   email: String!
   password: String!
-  message: String
-  error: String
 }
-
+input UserInput {
+    username: String!
+    email: String!
+    password: String!
+}
 type Query {
-  login(username: String!, password: String!): String
-  getEmployees: [Employee]
-  getEmployeeByID(id: ID!): Employee
+    login(username: String!, password: String!): LoginResponse
+    getEmployees: [Employee]
+    getEmployeeByID(id: ID!): Employee
 }
 
 type Mutation {
@@ -86,9 +78,7 @@ type Mutation {
 
   deleteEmployee(id: String!): Employee
 
-  signup(username: String!, 
-      email: String!, 
-      password: String!): User
+  signup(user: UserInput!): SignUpResponse
 }
 `;
 
@@ -124,18 +114,17 @@ const resolvers = {
                 throw new Error("Invalid password");
             }
     
-            // Generate a token
             const token = jwt.sign(
               { userId: user.id, email: user.email },
               process.env.JWT_SECRET, 
               { expiresIn: '1h' } 
             );
-
+    
             return { message: "Login successful", user, token };
         } catch (error) {
-            throw new Error(error.message || "Login Error.");
+            throw new Error(error.message || "An error occurred during login.");
         }
-    },
+    }    
     },
     Mutation: {
       addEmployee: async (_, args) => {
@@ -191,13 +180,13 @@ const resolvers = {
                   const field = Object.keys(err.keyPattern)[0];
                   throw new Error(`An employee with that ${field} already exists. Please use a different ${field}.`);
               } else {
-                  throw new Error('employee update error');
+                  throw new Error('Employee update error');
               }
           }
       },
       deleteEmployee: async (_, args) => {
           if (!args.id) {
-              throw new Error('An ID is required to delete an employee.');
+              throw new Error('ID is required to delete an employee.');
           }
           try {
               return await EmployeeModel.findByIdAndDelete(args.id);
@@ -205,25 +194,33 @@ const resolvers = {
               if (err.name === 'CastError') {
                   throw new Error('The ID provided for deletion is invalid.');
               }
-              throw new Error('An error occurred during the deletion process.');
+              throw new Error('Deletion Error');
           }
       },
-      signup: async (_, { username, password, email }) => { 
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-    
-        const user = new UserModel({
-          username,
-          password: hashedPassword,
-          email 
-        });
-    
-        await user.save();
-        return { id: user.id, username: user.username, email };
+      signup: async (_, { user }) => {
+        const { username, password, email } = user;
+        if (!username || !password) {
+            throw new Error('Username and password are required');
+        }
+
+        const existingUser = await UserModel.findOne({ username });
+        if (existingUser) {
+            throw new Error('Username already exists');
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const newUser = new UserModel({ username, email, password: hashedPassword });
+        await newUser.save();
+
+        return { 
+            message: 'User account created successfully',
+            user: newUser
+        }
       }
     }
 };
-  
 
 // Apollo Server
 const server = new ApolloServer({

@@ -3,6 +3,8 @@ import { Apollo } from "apollo-angular";
 import gql from "graphql-tag";
 import { Router } from "@angular/router";
 import { Employee } from "../models/employee";
+import { Observable } from 'rxjs';
+
 
 @Injectable({
   providedIn: "root", 
@@ -121,32 +123,39 @@ export class EmployeeService {
     });
   }
 
-  signup(username: string, email: string, password: string) {
+  signup(username: string, email: string, password: string): Observable<any> {
     return this.apollo.mutate({
       mutation: gql`
-        mutation {
-          signup(
-            username: "${username}",
-            email: "${email}",
-            password: "${password}"
-          ) {
-            username
-            email
+        mutation Signup($username: String!, $email: String!, $password: String!) {
+          signup(user: {username: $username, email: $email, password: $password}) {
+            message
+            user {
+              id
+              username
+              email
+            }
           }
         }
       `,
+      variables: {
+        username,
+        email,
+        password
+      }
     });
-  }
+}
+
 
   login(username: string, password: string) {
     return this.apollo.query({
       query: gql`
-          query {
-            login(username: "${username}", password: "${password}")
-          }
-        `,
+        query {
+          login(username: "${username}", password: "${password}")
+        }
+      `,
     });
   }
+  
 
   goToLogin() {
     this.router.navigate(["/"]);

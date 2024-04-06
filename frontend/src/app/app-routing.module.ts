@@ -6,6 +6,7 @@ import { EmployeesComponent } from "./view-employees/view-employees.component";
 import { AddEmployeeComponent } from "./add-employee/add-employee.component";
 import { UpdateEmployeeComponent } from "./update-employee/update-employee.component";
 
+
 const routes: Routes = [
   { path: "", component: LoginComponent }, 
   { path: "signup", component: SignupComponent }, 

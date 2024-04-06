@@ -5,7 +5,6 @@ import { Router } from "@angular/router";
 import { Employee } from "../models/employee";
 import { Observable } from 'rxjs';
 
-
 @Injectable({
   providedIn: "root", 
 })
@@ -143,8 +142,7 @@ export class EmployeeService {
         password
       }
     });
-}
-
+  }
 
   login(username: string, password: string) {
     return this.apollo.query({
